@@ -9,12 +9,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.UUID;
+import java.time.Instant;
 
-import static java.time.ZonedDateTime.now;
+import static java.time.Instant.now;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -35,9 +33,12 @@ public class TransactionServiceTest {
 
   @Test
   public void shouldAddTransaction() {
-    Transaction transaction = Transaction.builder().amount(BigDecimal.TEN).timestamp(ZonedDateTime.now()).build();
+    Transaction transaction = Transaction.builder()
+      .amount(100.00)
+      .timestamp(now().toEpochMilli())
+      .build();
 
-    when(repository.add(eq(transaction))).thenReturn(transaction.withTransactionId(UUID.randomUUID()));
+    when(repository.add(eq(transaction))).thenReturn(transaction.withTransactionId(randomUUID()));
 
     service.add(transaction);
 
@@ -46,8 +47,8 @@ public class TransactionServiceTest {
 
   @Test
   public void shouldGetStatisticsForGivenDate() {
-    ZonedDateTime currentDate = now().truncatedTo(ChronoUnit.SECONDS);
-    ZonedDateTime validDateTransaction = currentDate.minusSeconds(60);
+    Instant currentDate = now();
+    Long validDateTransaction = currentDate.minusSeconds(60).toEpochMilli();
 
     TransactionStatistics expectedStatistics = TransactionStatistics.builder()
       .sum(120.00)

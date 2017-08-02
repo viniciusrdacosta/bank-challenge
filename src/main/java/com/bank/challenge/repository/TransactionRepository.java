@@ -4,7 +4,6 @@ import com.bank.challenge.domain.Transaction;
 import com.bank.challenge.domain.TransactionStatistics;
 import org.springframework.stereotype.Repository;
 
-import java.time.ZonedDateTime;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +25,7 @@ public class TransactionRepository {
     return transactionToAdd;
   }
 
-  public TransactionStatistics statisticsBasedOn(ZonedDateTime timestamp) {
+  public TransactionStatistics statisticsBasedOn(Long timestamp) {
     DoubleSummaryStatistics statistics = transactions.stream()
       .filter(createdBeforeSixtySecondsFrom(timestamp))
       .mapToDouble(transaction -> transaction.getAmount().doubleValue()).summaryStatistics();
@@ -40,8 +39,7 @@ public class TransactionRepository {
       .build();
   }
 
-  private Predicate<Transaction> createdBeforeSixtySecondsFrom(ZonedDateTime timestamp) {
-    return transaction -> timestamp.isEqual(transaction.getTimestamp())
-      || timestamp.isBefore(transaction.getTimestamp());
+  private Predicate<Transaction> createdBeforeSixtySecondsFrom(Long timestamp) {
+    return transaction -> timestamp <= transaction.getTimestamp();
   }
 }

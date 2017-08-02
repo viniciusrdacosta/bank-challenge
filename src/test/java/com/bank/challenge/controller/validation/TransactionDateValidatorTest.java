@@ -1,35 +1,43 @@
 package com.bank.challenge.controller.validation;
 
 import com.bank.challenge.controller.model.TransactionRequest;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
+import java.time.Instant;
 
-import static java.time.ZonedDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TransactionDateValidatorTest {
 
+  private static final double ANY_AMOUNT = 100.00;
+  private TransactionDateValidator validator;
+
+  @Before
+  public void setUp() throws Exception {
+    validator = new TransactionDateValidator();
+  }
+
   @Test
   public void shouldBeValidWhenTransactionTimestampIsExactlySixtySecondsAgo() {
-    TransactionDateValidator validator = new TransactionDateValidator();
-    TransactionRequest request = new TransactionRequest(BigDecimal.TEN, now().minusSeconds(60));
+    Long transactionDate = Instant.now().minusSeconds(60).toEpochMilli();
+    TransactionRequest request = new TransactionRequest(ANY_AMOUNT, transactionDate);
 
     assertThat(validator.isValid(request, null)).isTrue();
   }
 
   @Test
   public void shouldBeValidWhenTransactionTimestampIsAfterSixtySecondsAgo() {
-    TransactionDateValidator validator = new TransactionDateValidator();
-    TransactionRequest request = new TransactionRequest(BigDecimal.TEN, now());
+    Long transactionDate = Instant.now().plusSeconds(1).toEpochMilli();
+    TransactionRequest request = new TransactionRequest(ANY_AMOUNT, transactionDate);
 
     assertThat(validator.isValid(request, null)).isTrue();
   }
 
   @Test
   public void shouldBeInvalidWhenTransactionTimestampIsBeforeSixtySecondsAgo() {
-    TransactionDateValidator validator = new TransactionDateValidator();
-    TransactionRequest request = new TransactionRequest(BigDecimal.TEN, now().minusSeconds(61));
+    Long transactionDate = Instant.now().minusSeconds(61).toEpochMilli();
+    TransactionRequest request = new TransactionRequest(ANY_AMOUNT, transactionDate);
 
     assertThat(validator.isValid(request, null)).isFalse();
   }

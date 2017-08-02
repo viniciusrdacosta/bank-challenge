@@ -4,8 +4,6 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.Wither;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Value
@@ -14,7 +12,7 @@ import java.util.UUID;
 public class Transaction {
 
   UUID transactionId;
-  BigDecimal amount;
-  ZonedDateTime timestamp;
+  Double amount;
+  Long timestamp;
 
 }

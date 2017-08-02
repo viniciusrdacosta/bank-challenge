@@ -5,11 +5,9 @@ import com.bank.challenge.domain.TransactionStatistics;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.Instant;
 
-import static java.time.ZonedDateTime.now;
+import static java.time.Instant.now;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TransactionRepositoryTest {
@@ -23,7 +21,8 @@ public class TransactionRepositoryTest {
 
   @Test
   public void shouldAddTransaction() {
-    Transaction transaction = transactionWith(BigDecimal.TEN, now().truncatedTo(ChronoUnit.SECONDS));
+    Long transactionDate = now().toEpochMilli();
+    Transaction transaction = transactionWith(100.00, transactionDate);
     Transaction transactionAdded = repository.add(transaction);
 
     assertThat(transactionAdded.getTransactionId()).isNotNull();
@@ -31,17 +30,17 @@ public class TransactionRepositoryTest {
 
   @Test
   public void shouldGetTransactionsStatisticsForGivenDate() {
-    ZonedDateTime dateCriteria = now().truncatedTo(ChronoUnit.SECONDS);
+    Instant transactionDate = now();
 
-    repository.add(transactionWith(BigDecimal.valueOf(20), dateCriteria));
-    repository.add(transactionWith(BigDecimal.valueOf(100.00), dateCriteria.plusSeconds(1)));
-    repository.add(transactionWith(BigDecimal.valueOf(10.22), dateCriteria.minusSeconds(1)));
+    repository.add(transactionWith(20.00, transactionDate.toEpochMilli()));
+    repository.add(transactionWith(120.00, transactionDate.plusSeconds(1).toEpochMilli()));
+    repository.add(transactionWith(10.22, transactionDate.minusSeconds(1).toEpochMilli()));
 
-    TransactionStatistics actualStatistics = repository.statisticsBasedOn(dateCriteria);
+    TransactionStatistics actualStatistics = repository.statisticsBasedOn(transactionDate.toEpochMilli());
     TransactionStatistics expectedStatistics = TransactionStatistics.builder()
-      .sum(120.00)
-      .avg(60.00)
-      .max(100.00)
+      .sum(140.00)
+      .avg(70.00)
+      .max(120.00)
       .min(20.00)
       .count(2)
       .build();
@@ -49,7 +48,7 @@ public class TransactionRepositoryTest {
     assertThat(actualStatistics).isEqualTo(expectedStatistics);
   }
 
-  private Transaction transactionWith(BigDecimal amount, ZonedDateTime timestamp) {
+  private Transaction transactionWith(Double amount, Long timestamp) {
     return Transaction.builder().amount(amount).timestamp(timestamp).build();
   }
 }

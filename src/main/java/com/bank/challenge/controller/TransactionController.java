@@ -14,8 +14,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.ZonedDateTime;
 import java.util.List;
+
+import static java.time.Instant.now;
 
 @Slf4j
 @RestController
@@ -38,7 +39,7 @@ public class TransactionController {
   @GetMapping(path = "/statistics")
   @ResponseStatus(code = HttpStatus.OK)
   public TransactionStatisticsResponse statistics() {
-    TransactionStatistics statistics = service.getStatisticsBasedOn(ZonedDateTime.now());
+    TransactionStatistics statistics = service.getStatisticsBasedOn(now());
 
     return TransactionStatisticsResponse.builder()
       .sum(statistics.getSum())

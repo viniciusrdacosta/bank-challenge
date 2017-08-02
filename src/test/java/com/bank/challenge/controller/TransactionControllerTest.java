@@ -12,10 +12,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
-import static java.time.ZonedDateTime.now;
+import static java.time.Instant.now;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
@@ -27,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(TransactionController.class)
 public class TransactionControllerTest {
 
+  public static final double AMOUNT = 100.00;
   @Autowired
   private MockMvc mockMvc;
 
@@ -38,7 +38,8 @@ public class TransactionControllerTest {
 
   @Test
   public void shouldReturnCreatedStatusWhenTransactionIsCreatedSuccessfully() throws Exception {
-    TransactionRequest request = new TransactionRequest(BigDecimal.TEN, now());
+    Long transactionDate = now().toEpochMilli();
+    TransactionRequest request = new TransactionRequest(AMOUNT, transactionDate);
 
     mockMvc.perform(post("/transactions")
       .content(mapper.writeValueAsString(request))
@@ -49,7 +50,8 @@ public class TransactionControllerTest {
 
   @Test
   public void shouldReturnNoContentStatusWhenTransactionIsBeforeSixtySecondsAgo() throws Exception {
-    TransactionRequest request = new TransactionRequest(BigDecimal.TEN, now().minusSeconds(61));
+    Long transactionDate = now().minusSeconds(61).toEpochMilli();
+    TransactionRequest request = new TransactionRequest(AMOUNT, transactionDate);
 
     mockMvc.perform(post("/transactions")
       .content(mapper.writeValueAsString(request))
@@ -59,7 +61,8 @@ public class TransactionControllerTest {
 
   @Test
   public void shouldReturnNoContentStatusWhenTransactionAmountIsNull() throws Exception {
-    TransactionRequest request = new TransactionRequest(null, now());
+    Long transactionDate = now().minusSeconds(60).toEpochMilli();
+    TransactionRequest request = new TransactionRequest(null, transactionDate);
 
     mockMvc.perform(post("/transactions")
       .content(mapper.writeValueAsString(request))
@@ -69,7 +72,7 @@ public class TransactionControllerTest {
 
   @Test
   public void shouldReturnNoContentStatusWhenTransactionTimestampIsNull() throws Exception {
-    TransactionRequest request = new TransactionRequest(BigDecimal.TEN, null);
+    TransactionRequest request = new TransactionRequest(AMOUNT, null);
 
     mockMvc.perform(post("/transactions")
       .content(mapper.writeValueAsString(request))
@@ -80,23 +83,23 @@ public class TransactionControllerTest {
   @Test
   public void shouldReturnTransactionStatistics() throws Exception {
     TransactionStatistics statistics = TransactionStatistics.builder()
-      .sum(120.00)
-      .avg(60.00)
-      .max(100.00)
+      .sum(180.00)
+      .avg(90.00)
+      .max(120)
       .min(20.00)
-      .count(2)
+      .count(3)
       .build();
 
-    when(service.getStatisticsBasedOn(any(ZonedDateTime.class))).thenReturn(statistics);
+    when(service.getStatisticsBasedOn(any(Instant.class))).thenReturn(statistics);
 
     mockMvc.perform(get("/statistics"))
       .andExpect(status().isOk())
       .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-      .andExpect(jsonPath("$.sum").value("120.0"))
-      .andExpect(jsonPath("$.avg").value("60.0"))
-      .andExpect(jsonPath("$.max").value("100.0"))
+      .andExpect(jsonPath("$.sum").value("180.0"))
+      .andExpect(jsonPath("$.avg").value("90.0"))
+      .andExpect(jsonPath("$.max").value("120.0"))
       .andExpect(jsonPath("$.min").value("20.0"))
-      .andExpect(jsonPath("$.count").value("2"));
+      .andExpect(jsonPath("$.count").value("3"));
   }
 
 }

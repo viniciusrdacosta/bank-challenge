@@ -6,12 +6,12 @@ import com.bank.challenge.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.Instant;
 
 @Service
 public class TransactionService {
 
+  private static final int SIXTY = 60;
   private final TransactionRepository repository;
 
   @Autowired
@@ -23,9 +23,8 @@ public class TransactionService {
     repository.add(transaction);
   }
 
-  public TransactionStatistics getStatisticsBasedOn(ZonedDateTime timestamp) {
-    ZonedDateTime validTransactionDate = timestamp.minusSeconds(60).truncatedTo(ChronoUnit.SECONDS);
-    return repository.statisticsBasedOn(validTransactionDate);
+  public TransactionStatistics getStatisticsBasedOn(Instant timestamp) {
+    return repository.statisticsBasedOn(timestamp.minusSeconds(SIXTY).toEpochMilli());
   }
 
 }
