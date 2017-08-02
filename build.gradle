@@ -1,0 +1,77 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    maven { url 'https://plugins.gradle.org/m2/' }
+    maven { url 'https://repo.spring.io/libs-milestone' }
+  }
+
+  ext {
+    springBootVersion = '2.0.0.M3'
+    dependencyManagementVersion = '1.0.3.RELEASE'
+  }
+
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.7.1'
+    classpath 'gradle.plugin.net.ossindex:ossindex-gradle-plugin:0.1.1'
+    classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.11'
+  }
+}
+
+apply plugin: 'pmd'
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'jacoco'
+apply plugin: 'findbugs'
+apply plugin: "net.ossindex.audit"
+apply plugin: 'info.solidsoft.pitest'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: "io.spring.dependency-management"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+jar {
+  baseName = 'bank-challenge'
+  if (System.getenv('CI') == 'true') {
+    version = System.getenv('CIRCLE_BUILD_NUM')
+  } else {
+    version = '1.0.0'
+  }
+}
+
+pitest {
+  targetClasses = ['com.bank.challenge*']
+  threads = 4
+  outputFormats = ['XML', 'HTML']
+}
+
+repositories {
+  mavenCentral()
+  maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+  compile 'org.slf4j:slf4j-api'
+  compile 'com.google.code.findbugs:annotations:3.0.1'
+
+  compile 'org.springframework.boot:spring-boot-devtools'
+  compile 'org.springframework.boot:spring-boot-starter-web'
+  compile 'org.springframework.boot:spring-boot-starter-actuator'
+
+  compileOnly 'org.projectlombok:lombok'
+
+  testCompile 'org.assertj:assertj-core'
+  testCompile 'com.jayway.restassured:rest-assured:2.9.0'
+  testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+  imports {
+    mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+  }
+}
+
+apply from: "${rootProject.rootDir}/gradle/idea.gradle"
+apply from: "${rootProject.rootDir}/gradle/coveralls.gradle"

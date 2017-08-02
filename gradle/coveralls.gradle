@@ -1,0 +1,25 @@
+test {
+  testLogging {
+    showStandardStreams = false
+    exceptionFormat "full"
+  }
+}
+
+tasks.withType(FindBugs) {
+  reports {
+    xml.enabled = false
+    html.enabled = true
+  }
+}
+
+jacocoTestReport {
+  doFirst {
+    classDirectories = fileTree(dir: "${buildDir}/classes/main/")
+    executionData = fileTree(dir: "$buildDir/jacoco", include: '**/*.exec')
+  }
+
+  reports {
+    xml.enabled = true
+    html.enabled = true
+  }
+}
