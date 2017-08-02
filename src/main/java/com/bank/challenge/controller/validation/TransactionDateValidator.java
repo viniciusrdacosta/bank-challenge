@@ -5,6 +5,7 @@ import com.bank.challenge.controller.model.TransactionRequest;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class TransactionDateValidator implements ConstraintValidator<NotBeforeSixtySecondsAgo, TransactionRequest> {
 
@@ -16,9 +17,13 @@ public class TransactionDateValidator implements ConstraintValidator<NotBeforeSi
 
   @Override
   public boolean isValid(TransactionRequest value, ConstraintValidatorContext context) {
-    ZonedDateTime validTimestamp = value.getRequestDate().minusSeconds(SIXTY);
-    ZonedDateTime transactionTimeStamp = value.getTimestamp();
+    if (value.getTimestamp() == null) {
+      return true;
+    }
 
-    return transactionTimeStamp == null || validTimestamp.isEqual(transactionTimeStamp) || validTimestamp.isBefore(transactionTimeStamp);
+    ZonedDateTime validTimestamp = value.getRequestDate().minusSeconds(SIXTY).truncatedTo(ChronoUnit.SECONDS);
+    ZonedDateTime transactionTimeStamp = value.getTimestamp().truncatedTo(ChronoUnit.SECONDS);
+
+    return validTimestamp.isEqual(transactionTimeStamp) || validTimestamp.isBefore(transactionTimeStamp);
   }
 }

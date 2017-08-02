@@ -1,7 +1,9 @@
 package com.bank.challenge.controller;
 
 import com.bank.challenge.controller.model.TransactionRequest;
+import com.bank.challenge.controller.model.TransactionStatisticsResponse;
 import com.bank.challenge.domain.Transaction;
+import com.bank.challenge.domain.TransactionStatistics;
 import com.bank.challenge.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +14,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/transactions")
 public class TransactionController {
 
   private final TransactionService service;
@@ -26,11 +28,25 @@ public class TransactionController {
     this.service = service;
   }
 
-  @PostMapping
+  @PostMapping(path = "/transactions")
   @ResponseStatus(code = HttpStatus.CREATED)
   public void add(@Valid @RequestBody TransactionRequest request) {
     Transaction transaction = Transaction.builder().amount(request.getAmount()).timestamp(request.getTimestamp()).build();
     service.add(transaction);
+  }
+
+  @GetMapping(path = "/statistics")
+  @ResponseStatus(code = HttpStatus.OK)
+  public TransactionStatisticsResponse statistics() {
+    TransactionStatistics statistics = service.getStatisticsBasedOn(ZonedDateTime.now());
+
+    return TransactionStatisticsResponse.builder()
+      .sum(statistics.getSum())
+      .avg(statistics.getAvg())
+      .max(statistics.getMax())
+      .min(statistics.getMin())
+      .count(statistics.getCount())
+      .build();
   }
 
   @ExceptionHandler
