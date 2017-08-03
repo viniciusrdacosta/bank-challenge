@@ -1,7 +1,7 @@
 package com.bank.challenge.repository;
 
-import com.bank.challenge.domain.Transaction;
-import com.bank.challenge.domain.TransactionStatistics;
+import com.bank.challenge.model.Transaction;
+import com.bank.challenge.model.TransactionStatistics;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -2,8 +2,8 @@ package com.bank.challenge.controller;
 
 import com.bank.challenge.controller.model.TransactionRequest;
 import com.bank.challenge.controller.model.TransactionStatisticsResponse;
-import com.bank.challenge.domain.Transaction;
-import com.bank.challenge.domain.TransactionStatistics;
+import com.bank.challenge.model.Transaction;
+import com.bank.challenge.model.TransactionStatistics;
 import com.bank.challenge.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -20,8 +20,8 @@ buildscript {
 
 apply plugin: 'pmd'
 apply plugin: 'java'
-apply plugin: 'idea'
 apply plugin: 'jacoco'
+apply plugin: 'idea'
 apply plugin: 'findbugs'
 apply plugin: 'application'
 apply plugin: "net.ossindex.audit"
@@ -34,6 +34,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 pitest {
+  timestampedReports = false
   targetClasses = ['com.bank.challenge*']
   threads = 4
   outputFormats = ['XML', 'HTML']
@@ -68,4 +69,6 @@ dependencyManagement {
 mainClassName = "com.bank.challenge.App"
 
 apply from: "${rootProject.rootDir}/gradle/idea.gradle"
+apply from: "${rootProject.rootDir}/gradle/unit-tests.gradle"
+apply from: "${rootProject.rootDir}/gradle/end-to-end-tests.gradle"
 apply from: "${rootProject.rootDir}/gradle/coveralls.gradle"

@@ -1,7 +1,7 @@
 package com.bank.challenge.repository;
 
-import com.bank.challenge.domain.Transaction;
-import com.bank.challenge.domain.TransactionStatistics;
+import com.bank.challenge.model.Transaction;
+import com.bank.challenge.model.TransactionStatistics;
 import org.springframework.stereotype.Repository;
 
 import java.util.DoubleSummaryStatistics;
@@ -28,13 +28,13 @@ public class TransactionRepository {
   public TransactionStatistics statisticsBasedOn(Long timestamp) {
     DoubleSummaryStatistics statistics = transactions.stream()
       .filter(createdBeforeSixtySecondsFrom(timestamp))
-      .mapToDouble(transaction -> transaction.getAmount().doubleValue()).summaryStatistics();
+      .mapToDouble(Transaction::getAmount).summaryStatistics();
 
     return TransactionStatistics.builder()
-      .sum(statistics.getSum())
       .avg(statistics.getAverage())
-      .max(statistics.getMax())
       .min(statistics.getMin())
+      .sum(statistics.getSum())
+      .max(statistics.getMax())
       .count(statistics.getCount())
       .build();
   }

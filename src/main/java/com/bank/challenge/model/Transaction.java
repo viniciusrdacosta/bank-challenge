@@ -1,4 +1,4 @@
-package com.bank.challenge.domain;
+package com.bank.challenge.model;
 
 import lombok.Builder;
 import lombok.Value;

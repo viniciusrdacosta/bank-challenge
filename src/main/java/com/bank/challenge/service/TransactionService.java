@@ -1,7 +1,7 @@
 package com.bank.challenge.service;
 
-import com.bank.challenge.domain.Transaction;
-import com.bank.challenge.domain.TransactionStatistics;
+import com.bank.challenge.model.Transaction;
+import com.bank.challenge.model.TransactionStatistics;
 import com.bank.challenge.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

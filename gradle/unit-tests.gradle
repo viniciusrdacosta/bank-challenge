@@ -1,0 +1,26 @@
+sourceSets {
+  unitTest {
+    compileClasspath += main.output + test.output
+    runtimeClasspath += main.output + test.output
+    java.srcDirs = ['src/test/unit/java']
+  }
+}
+
+configurations {
+  unitTestCompile.extendsFrom testCompile
+  unitTestRuntime.extendsFrom testRuntime
+}
+
+task unitTest(type: Test) {
+  unitTest.testClassesDirs = sourceSets.unitTest.output.classesDirs
+
+  classpath = sourceSets.unitTest.runtimeClasspath
+
+  reports.html.destination = file("${reporting.baseDir}/${name}")
+}
+
+idea {
+  module {
+    scopes.TEST.plus += [configurations.unitTestCompile]
+  }
+}

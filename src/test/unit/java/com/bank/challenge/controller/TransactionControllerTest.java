@@ -1,7 +1,7 @@
 package com.bank.challenge.controller;
 
 import com.bank.challenge.controller.model.TransactionRequest;
-import com.bank.challenge.domain.TransactionStatistics;
+import com.bank.challenge.model.TransactionStatistics;
 import com.bank.challenge.service.TransactionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;

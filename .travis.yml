@@ -3,6 +3,12 @@ language: java
 jdk:
   - oraclejdk8
 
+env:
+  global:
+    - CODECOV_TOKEN="6163254c-13cf-4c97-8741-350f29632ef2"
+    - COVERALLS_REPO_TOKEN=iCjm0mrwuJy7FNdAyfXXHXkSxzwHuVuOS
+    - CI_NAME=travis-ci
+
 os:
   - linux
 
@@ -19,6 +25,8 @@ install:
 
 script:
   - ./gradlew compileJava compileTestJava
-  - ./gradlew check pitest jacocoTestReport coveralls
+  - ./gradlew check unitTest endToEndTest pitest jacocoTestReport coveralls
   - ./gradlew assemble
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -t 6163254c-13cf-4c97-8741-350f29632ef2
