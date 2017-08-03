@@ -23,6 +23,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'findbugs'
+apply plugin: 'application'
 apply plugin: "net.ossindex.audit"
 apply plugin: 'info.solidsoft.pitest'
 apply plugin: 'org.springframework.boot'
@@ -31,15 +32,6 @@ apply plugin: "io.spring.dependency-management"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-jar {
-  baseName = 'bank-challenge'
-  if (System.getenv('CI') == 'true') {
-    version = System.getenv('CIRCLE_BUILD_NUM')
-  } else {
-    version = '1.0.0'
-  }
-}
 
 pitest {
   targetClasses = ['com.bank.challenge*']
@@ -72,6 +64,8 @@ dependencyManagement {
     mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
   }
 }
+
+mainClassName = "com.bank.challenge.App"
 
 apply from: "${rootProject.rootDir}/gradle/idea.gradle"
 apply from: "${rootProject.rootDir}/gradle/coveralls.gradle"

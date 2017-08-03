@@ -1,0 +1,24 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+os:
+  - linux
+
+branches:
+  only:
+    - master
+
+cache:
+  directories:
+  - $HOME/.gradle
+
+install:
+  - ./gradlew clean dependencies
+
+script:
+  - ./gradlew compileJava compileTestJava
+  - ./gradlew check pitest jacocoTestReport coveralls
+  - ./gradlew assemble
+
