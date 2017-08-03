@@ -25,8 +25,8 @@ install:
 
 script:
   - ./gradlew compileJava compileTestJava
-  - ./gradlew check unitTest endToEndTest pitest jacocoTestReport coveralls
+  - ./gradlew check unitTest endToEndTest pitest
   - ./gradlew assemble
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash) -t 6163254c-13cf-4c97-8741-350f29632ef2
+  - ./gradlew jacocoTestReport coveralls
